@@ -5,7 +5,7 @@
 
     <groupId>pl.commercelink</groupId>
     <artifactId>shipping-api</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>shipping-api</name>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>pl.commercelink</groupId>
             <artifactId>provider-api</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
