@@ -12,6 +12,4 @@ public interface ShippingProvider {
     ShipmentResult createShipment(ShipmentRequest request);
 
     void cancelShipment(String externalId);
-
-    ShippingWebhookResult processWebhook(ShippingWebhookRequest request);
 }
