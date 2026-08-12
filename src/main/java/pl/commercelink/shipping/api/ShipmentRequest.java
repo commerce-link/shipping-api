@@ -8,8 +8,13 @@ public record ShipmentRequest(
         ShipmentAddress receiver,
         List<Parcel> parcels,
         String carrierId,
-        ShipmentOptions options
+        ShipmentOptions options,
+        DeliveryPoint deliveryPoint
 ) {
+
+    public boolean hasDeliveryPoint() {
+        return deliveryPoint != null && deliveryPoint.code() != null && !deliveryPoint.code().isBlank();
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -22,6 +27,7 @@ public record ShipmentRequest(
         private List<Parcel> parcels = List.of();
         private String carrierId;
         private ShipmentOptions options = ShipmentOptions.NONE;
+        private DeliveryPoint deliveryPoint;
 
         public Builder pickup(ShipmentAddress pickup) {
             this.pickup = pickup;
@@ -53,8 +59,13 @@ public record ShipmentRequest(
             return this;
         }
 
+        public Builder deliveryPoint(DeliveryPoint deliveryPoint) {
+            this.deliveryPoint = deliveryPoint;
+            return this;
+        }
+
         public ShipmentRequest build() {
-            return new ShipmentRequest(pickup, sender, receiver, parcels, carrierId, options);
+            return new ShipmentRequest(pickup, sender, receiver, parcels, carrierId, options, deliveryPoint);
         }
     }
 }
