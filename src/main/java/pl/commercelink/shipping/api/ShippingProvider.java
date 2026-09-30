@@ -11,7 +11,12 @@ public interface ShippingProvider {
 
     ShipmentResult createShipment(ShipmentRequest request);
 
-    void cancelShipment(String externalId);
+    /** Requests the cancellation; the result is usually PENDING and must be read with checkShipmentCancellation. */
+    ShipmentCancellation cancelShipment(String externalId);
+
+    default ShipmentCancellation checkShipmentCancellation(String commandId, String externalId) {
+        throw new UnsupportedOperationException("Cancellation check is not supported by this provider");
+    }
 
     default boolean supportsParcelTracking() {
         return false;
