@@ -51,7 +51,7 @@ class ShipmentCancellationTest {
             public List<Carrier> getAvailableCarriers() { return List.of(); }
             public List<ShippingEstimate> estimateShipment(ShipmentRequest request, java.util.Set<String> carrierIds) { return List.of(); }
             public ShipmentResult createShipment(ShipmentRequest request) { return null; }
-            public ShipmentCancellation cancelShipment(String externalId) { return ShipmentCancellation.pending("cmd-1"); }
+            public ShipmentCancellation cancelShipment(String externalId, String commandId) { return ShipmentCancellation.pending(commandId); }
         };
 
         // when / then
