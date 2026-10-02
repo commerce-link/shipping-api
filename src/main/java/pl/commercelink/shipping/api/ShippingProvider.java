@@ -11,7 +11,17 @@ public interface ShippingProvider {
 
     ShipmentResult createShipment(ShipmentRequest request);
 
-    void cancelShipment(String externalId);
+    /**
+     * Requests the cancellation of one shipment under a command id chosen by the caller.
+     * The provider uses {@code commandId} as the idempotency key of the request, so the caller can record it
+     * before sending and a repeated request with the same id never starts a second command.
+     * The result is usually PENDING and must be read with {@link #checkShipmentCancellation(String, String)}.
+     */
+    ShipmentCancellation cancelShipment(String externalId, String commandId);
+
+    default ShipmentCancellation checkShipmentCancellation(String commandId, String externalId) {
+        throw new UnsupportedOperationException("Cancellation check is not supported by this provider");
+    }
 
     default boolean supportsParcelTracking() {
         return false;
