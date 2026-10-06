@@ -53,4 +53,32 @@ class ShipmentCreationTest {
         assertEquals(CommandStatus.FAILED, creation.status());
         assertEquals("Nieprawidłowy kod pocztowy", creation.error());
     }
+
+    @Test
+    void parcelWithoutABookedPickupHasNoPickupNumber() {
+        // when
+        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, true);
+
+        // then
+        assertNull(parcel.pickupNumber());
+    }
+
+    @Test
+    void blankPickupNumberMeansNoBookedPickup() {
+        // when
+        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, false, " ");
+
+        // then
+        assertNull(parcel.pickupNumber());
+    }
+
+    @Test
+    void parcelCarriesThePickupNumberBookedByTheCarrier() {
+        // when
+        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, false,
+                "APP/CRIN/13023761");
+
+        // then
+        assertEquals("APP/CRIN/13023761", parcel.pickupNumber());
+    }
 }
