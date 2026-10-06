@@ -38,7 +38,8 @@ class ParcelTrackingSubscriptionTest {
         ShippingProvider provider = new ShippingProvider() {
             public java.util.List<Carrier> getAvailableCarriers() { return java.util.List.of(); }
             public java.util.List<ShippingEstimate> estimateShipment(ShipmentRequest request, java.util.Set<String> carrierIds) { return java.util.List.of(); }
-            public ShipmentResult createShipment(ShipmentRequest request) { return null; }
+            public ShipmentCreation createShipment(ShipmentRequest request, String commandId) { return ShipmentCreation.pending(commandId, null); }
+            public ShipmentCreation checkShipmentCreation(String commandId, String externalId) { return ShipmentCreation.pending(commandId, externalId); }
             public ShipmentCancellation cancelShipment(String externalId, String commandId) { return ShipmentCancellation.pending(commandId); }
         };
 

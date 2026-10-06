@@ -8,10 +8,19 @@ public record ShipmentResult(
         String managementUrl
 ) {
 
+    public ShipmentResult {
+        parcels = parcels == null ? List.of() : List.copyOf(parcels);
+    }
+
+    /**
+     * pickupRequired: a courier pickup still has to be ordered for this parcel (false when it is handed in at a point,
+     * or the carrier has no pickups).
+     */
     public record ShipmentParcelResult(
             String trackingNo,
             String carrier,
-            String trackingUrl
+            String trackingUrl,
+            boolean pickupRequired
     ) {
     }
 }
