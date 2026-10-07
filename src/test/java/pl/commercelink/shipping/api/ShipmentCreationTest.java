@@ -5,14 +5,16 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShipmentCreationTest {
 
     private static ShipmentResult result() {
         return new ShipmentResult("21480003",
-                List.of(new ShipmentResult.ShipmentParcelResult("0000889416460Q", "dpd", "https://t/1", true)), null);
+                List.of(new ShipmentResult.ShipmentParcelResult("0000889416460Q", "dpd", "https://t/1", true, null)), null);
     }
 
     @Test
@@ -55,30 +57,23 @@ class ShipmentCreationTest {
     }
 
     @Test
-    void parcelWithoutABookedPickupHasNoPickupNumber() {
+    void blankPickupNumberMeansNoBookedPickupAndAPickupStillRequired() {
         // when
-        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, true);
+        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, true, " ");
 
         // then
         assertNull(parcel.pickupNumber());
+        assertTrue(parcel.pickupRequired());
     }
 
     @Test
-    void blankPickupNumberMeansNoBookedPickup() {
+    void parcelWithAPickupBookedByTheCarrierNeedsNoPickup() {
         // when
-        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, false, " ");
-
-        // then
-        assertNull(parcel.pickupNumber());
-    }
-
-    @Test
-    void parcelCarriesThePickupNumberBookedByTheCarrier() {
-        // when
-        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, false,
+        ShipmentResult.ShipmentParcelResult parcel = new ShipmentResult.ShipmentParcelResult("X1", "dpd", null, true,
                 "APP/CRIN/13023761");
 
         // then
         assertEquals("APP/CRIN/13023761", parcel.pickupNumber());
+        assertFalse(parcel.pickupRequired());
     }
 }
