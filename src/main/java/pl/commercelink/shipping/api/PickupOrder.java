@@ -4,7 +4,8 @@ import java.util.List;
 
 /**
  * Outcome of a courier pickup command for one or more packages of the same carrier. externalIds: the packages the
- * provider booked, set only when SUCCEEDED; empty means all packages of the command.
+ * provider booked, set only when SUCCEEDED; an empty list on SUCCEEDED means every package of the command was ordered
+ * (a provider that booked only some of them must list those, so the caller can order the rest again).
  */
 public record PickupOrder(
         String commandId,
