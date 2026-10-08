@@ -2,6 +2,10 @@ package pl.commercelink.shipping.api;
 
 import java.util.List;
 
+/**
+ * orderReference: the marketplace order the shipment is for; null outside marketplace orders. Added in 0.6.0 as the
+ * last component; the 0.5.0 constructor is kept for callers compiled against it.
+ */
 public record ShipmentRequest(
         ShipmentAddress pickup,
         ShipmentAddress sender,
@@ -9,11 +13,23 @@ public record ShipmentRequest(
         List<Parcel> parcels,
         String carrierId,
         ShipmentOptions options,
-        DeliveryPoint deliveryPoint
+        DeliveryPoint deliveryPoint,
+        OrderReference orderReference
 ) {
+
+    public ShipmentRequest(ShipmentAddress pickup, ShipmentAddress sender, ShipmentAddress receiver,
+                           List<Parcel> parcels, String carrierId, ShipmentOptions options,
+                           DeliveryPoint deliveryPoint) {
+        this(pickup, sender, receiver, parcels, carrierId, options, deliveryPoint, null);
+    }
 
     public boolean hasDeliveryPoint() {
         return deliveryPoint != null && deliveryPoint.code() != null && !deliveryPoint.code().isBlank();
+    }
+
+    public boolean hasOrderReference() {
+        return orderReference != null && orderReference.externalOrderId() != null
+                && !orderReference.externalOrderId().isBlank();
     }
 
     public static Builder builder() {
@@ -28,6 +44,7 @@ public record ShipmentRequest(
         private String carrierId;
         private ShipmentOptions options = ShipmentOptions.NONE;
         private DeliveryPoint deliveryPoint;
+        private OrderReference orderReference;
 
         public Builder pickup(ShipmentAddress pickup) {
             this.pickup = pickup;
@@ -64,8 +81,14 @@ public record ShipmentRequest(
             return this;
         }
 
+        public Builder orderReference(OrderReference orderReference) {
+            this.orderReference = orderReference;
+            return this;
+        }
+
         public ShipmentRequest build() {
-            return new ShipmentRequest(pickup, sender, receiver, parcels, carrierId, options, deliveryPoint);
+            return new ShipmentRequest(pickup, sender, receiver, parcels, carrierId, options, deliveryPoint,
+                    orderReference);
         }
     }
 }
