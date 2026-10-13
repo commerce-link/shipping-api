@@ -28,3 +28,7 @@ Extend it in the adapter's tests and implement the hooks:
 - `completeCreation(commandId)` - makes the fake finish that creation command successfully;
 - `failCreation(commandId)` (optional) - makes the fake fail it and returns the provider's answer; without it the
   FAILED check is skipped.
+
+## 0.6.0
+
+Adds `ShippingProvider.supportsShipmentProposals`/`proposeShipment` (order-bound integrations such as Wysyłam z Allegro answer with a `ShipmentProposal`, an unavailable one carrying the reason), pickup variants taking the pickup address (by default they delegate to the variants without it), `supportsTrackingPolling`, `ShipmentRequest.orderReference`, `ShipmentParcelResult.cancellable` and `ShippingException.providerMessages`. All additions are binary compatible with adapters built against 0.5.0, and the contract test skips the new checks unless the adapter supplies the matching sample (`sampleOrderReference`, `unsupportedOrderReference`, `samplePickupAddress`, `sampleTrackedExternalId`).

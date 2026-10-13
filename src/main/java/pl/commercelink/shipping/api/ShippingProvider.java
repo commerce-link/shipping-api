@@ -41,6 +41,20 @@ public interface ShippingProvider {
     /** Reads the creation command; externalId may be null when the start call ended without an answer. */
     ShipmentCreation checkShipmentCreation(String commandId, String externalId);
 
+    /** True when the integration ships orders of one marketplace and can tell what it would ship for one. */
+    default boolean supportsShipmentProposals() {
+        return false;
+    }
+
+    /**
+     * What the integration would ship for the marketplace order: the buyer's delivery method with its limits, or an
+     * unavailable proposal with the reason (never an exception for an order it cannot ship). Throws
+     * {@link ShippingException} only when the provider could not be asked (authorization, outage).
+     */
+    default ShipmentProposal proposeShipment(OrderReference reference) {
+        throw new UnsupportedOperationException("Shipment proposals are not supported by this provider");
+    }
+
     default boolean supportsPickups() {
         return false;
     }
@@ -48,6 +62,16 @@ public interface ShippingProvider {
     /** Pickup windows common to all given packages, sorted, available ones only. */
     default List<PickupWindow> pickupWindows(List<String> externalIds, LocalDate readyDate, int daysAhead) {
         throw new UnsupportedOperationException("Courier pickups are not supported by this provider");
+    }
+
+    /**
+     * Pickup windows for packages collected from the given address. Callers always use this variant; providers that
+     * need the address (Wysyłam z Allegro) override it, the default ignores the address for providers built against
+     * 0.5.0 (Furgonetka knows the pickup address from the package).
+     */
+    default List<PickupWindow> pickupWindows(List<String> externalIds, ShipmentAddress pickup, LocalDate readyDate,
+                                             int daysAhead) {
+        return pickupWindows(externalIds, readyDate, daysAhead);
     }
 
     /**
@@ -60,6 +84,12 @@ public interface ShippingProvider {
      */
     default PickupOrder orderPickup(List<String> externalIds, PickupWindow window, String commandId) {
         throw new UnsupportedOperationException("Courier pickups are not supported by this provider");
+    }
+
+    /** Orders a pickup from the given address; same contract as {@link #orderPickup(List, PickupWindow, String)}. */
+    default PickupOrder orderPickup(List<String> externalIds, ShipmentAddress pickup, PickupWindow window,
+                                    String commandId) {
+        return orderPickup(externalIds, window, commandId);
     }
 
     default PickupOrder checkPickupOrder(String commandId) {
@@ -87,6 +117,14 @@ public interface ShippingProvider {
     }
 
     default boolean supportsParcelTracking() {
+        return false;
+    }
+
+    /**
+     * True when statuses are read by asking ({@link #getTrackingEvents}) instead of arriving by webhook; the caller
+     * then polls shipments of this integration. Implies {@link #supportsParcelTracking()}.
+     */
+    default boolean supportsTrackingPolling() {
         return false;
     }
 
